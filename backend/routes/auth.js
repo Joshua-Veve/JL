@@ -7,13 +7,12 @@ const router = express.Router();
 
 // Register
 router.post('/register', async (req, res) => {
-  const { full_name, email, password, role } = req.body;
+  const { full_name, email, password } = req.body;
   try {
-    const userRole = role || (email.includes('admin') ? 'admin' : 'student');
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await pool.query(
       'INSERT INTO users (full_name, email, password_hash, role) VALUES ($1, $2, $3, $4) RETURNING *',
-      [full_name, email, hashedPassword, userRole]
+      [full_name, email, hashedPassword, 'student']
     );
     res.status(201).json({ message: 'User registered successfully' });
   } catch (err) {
