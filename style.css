@@ -138,7 +138,7 @@ body {
 h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
     line-height: 1.25;
-    color: var(--gray-900);
+    color: var(--gray-100);
     margin-bottom: var(--space-md);
 }
 
@@ -151,7 +151,7 @@ h6 { font-size: 0.75rem; }
 
 p {
     margin-bottom: var(--space-md);
-    color: var(--gray-700);
+    color: var(--gray-300);
 }
 
 a {
@@ -170,7 +170,7 @@ a:hover {
 .text-warning { color: var(--warning); }
 .text-danger { color: var(--danger); }
 .text-info { color: var(--info); }
-.text-muted { color: var(--gray-500); }
+.text-muted { color: var(--gray-400); }
 
 .bg-primary { background: var(--primary); }
 .bg-secondary { background: var(--secondary); }
@@ -232,7 +232,7 @@ a:hover {
 }
 
 .auth-tagline {
-    color: var(--gray-600);
+    color: var(--gray-400);
     font-size: 1rem;
     margin: 0;
 }
@@ -291,7 +291,7 @@ a:hover {
 .form-group label {
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--gray-700);
+    color: var(--gray-300);
     display: flex;
     align-items: center;
     gap: var(--space-sm);
@@ -335,18 +335,18 @@ input::placeholder {
     transform: translateY(-50%);
     background: transparent;
     border: none;
-    color: var(--gray-500);
+    color: var(--gray-400);
     cursor: pointer;
     padding: var(--space-sm);
     transition: color var(--transition-fast);
 }
 
 .toggle-password:hover {
-    color: var(--gray-700);
+    color: var(--gray-300);
 }
 
 .password-hint {
-    color: var(--gray-500);
+    color: var(--gray-400);
     font-size: 0.75rem;
     margin-top: var(--space-xs);
 }
@@ -1540,7 +1540,7 @@ input::placeholder {
     padding: var(--space-lg) var(--space-md);
     text-align: left;
     font-weight: 600;
-    color: var(--gray-700);
+    color: var(--gray-200);
     border-bottom: 2px solid var(--border-color);
     white-space: nowrap;
 }
@@ -1548,7 +1548,7 @@ input::placeholder {
 .data-table td {
     padding: var(--space-md);
     border-bottom: 1px solid var(--border-color);
-    color: var(--gray-700);
+    color: var(--gray-300);
 }
 
 .data-table tbody tr:hover {
@@ -1563,7 +1563,7 @@ input::placeholder {
 .empty-state {
     text-align: center;
     padding: var(--space-3xl);
-    color: var(--gray-500);
+    color: var(--gray-400);
 }
 
 .empty-state i {
