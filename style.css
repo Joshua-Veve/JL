@@ -3,42 +3,42 @@
    ============================================ */
 
 :root {
-    /* Color Palette - Modern Professional */
-    --primary: #4361ee;
-    --primary-dark: #3a56d4;
-    --primary-light: #4895ef;
+    /* Color Palette - Dark Gray with Green Accent */
+    --primary: #10b981; /* Green accent */
+    --primary-dark: #059669;
+    --primary-light: #34d399;
     --primary-gradient: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-    
-    --secondary: #7209b7;
-    --secondary-dark: #5a0891;
-    --secondary-light: #9d4edd;
-    
-    --accent: #f72585;
-    --accent-dark: #d81b60;
-    --accent-light: #ff4da6;
-    
-    --success: #4cc9f0;
-    --success-dark: #2eb4d8;
-    --success-light: #7dd6f2;
-    
-    --warning: #f8961e;
-    --warning-dark: #d97e0e;
-    --warning-light: #fab95b;
-    
-    --danger: #f94144;
-    --danger-dark: #d32f2f;
-    --danger-light: #ff6b6b;
-    
-    --info: #3a86ff;
-    --info-dark: #2667cc;
-    --info-light: #6ba4ff;
-    
-    /* Neutral Colors */
-    --dark: #1a1a2e;
-    --dark-light: #2d2d44;
-    --darker: #0f1419;
-    
-    --light: #f8f9fa;
+
+    --secondary: #6b7280; /* Gray */
+    --secondary-dark: #4b5563;
+    --secondary-light: #9ca3af;
+
+    --accent: #22c55e; /* Bright green */
+    --accent-dark: #16a34a;
+    --accent-light: #4ade80;
+
+    --success: #10b981;
+    --success-dark: #059669;
+    --success-light: #34d399;
+
+    --warning: #f59e0b;
+    --warning-dark: #d97706;
+    --warning-light: #fbbf24;
+
+    --danger: #ef4444;
+    --danger-dark: #dc2626;
+    --danger-light: #f87171;
+
+    --info: #06b6d4;
+    --info-dark: #0891b2;
+    --info-light: #22d3ee;
+
+    /* Neutral Colors - Dark Gray Theme */
+    --dark: #1f2937; /* Dark gray background */
+    --dark-light: #374151;
+    --darker: #111827;
+
+    --light: #f9fafb;
     --lighter: #ffffff;
     --gray-50: #f9fafb;
     --gray-100: #f3f4f6;
@@ -51,17 +51,17 @@
     --gray-800: #1f2937;
     --gray-900: #111827;
     
-    /* UI Colors */
-    --sidebar-bg: var(--dark);
-    --sidebar-text: var(--light);
-    --sidebar-hover: var(--dark-light);
-    
-    --header-bg: var(--lighter);
-    --card-bg: var(--lighter);
-    --input-bg: var(--light);
-    
-    --border-color: var(--gray-200);
-    --border-dark: var(--gray-300);
+    /* UI Colors - Dark Gray Theme */
+    --sidebar-bg: var(--gray-800);
+    --sidebar-text: var(--gray-100);
+    --sidebar-hover: var(--gray-700);
+
+    --header-bg: var(--gray-800);
+    --card-bg: var(--gray-800);
+    --input-bg: var(--gray-700);
+
+    --border-color: var(--gray-600);
+    --border-dark: var(--gray-500);
     
     /* Spacing */
     --space-xs: 0.25rem;
@@ -88,7 +88,7 @@
     --shadow-xl: 0 12px 36px rgba(0, 0, 0, 0.2);
     --shadow-2xl: 0 20px 48px rgba(0, 0, 0, 0.25);
     
-    --shadow-primary: 0 4px 20px rgba(67, 97, 238, 0.3);
+    --shadow-primary: 0 4px 20px rgba(16, 185, 129, 0.3);
     
     /* Transitions */
     --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -125,8 +125,8 @@ body {
     font-family: var(--font-sans);
     font-size: 0.875rem;
     line-height: 1.5;
-    color: var(--gray-800);
-    background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+    color: var(--gray-100);
+    background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%);
     min-height: 100vh;
     overflow-x: hidden;
 }
@@ -1868,7 +1868,7 @@ input::placeholder {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(26, 26, 46, 0.9);
+    background: rgba(17, 24, 39, 0.95);
     display: flex;
     flex-direction: column;
     align-items: center;
