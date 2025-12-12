@@ -26,7 +26,7 @@ This is a web-based digital library catalogue system for Academic City Universit
 
 ## Deployment Links
 - Backend: https://jl-cezp.onrender.com
-- Frontend: [GitHub Pages URL - to be deployed]
+- Frontend: https://joshua-veve.github.io/JL/
 
 ## Feature Checklist
 - [x] User Registration & Authentication
