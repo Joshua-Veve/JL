@@ -3,6 +3,28 @@
 // ============================================
 
 const API_BASE = 'https://jl-cezp.onrender.com';
+
+// Test database connection
+async function testConnection() {
+    try {
+        const response = await fetch(`${API_BASE}/api/books/search?limit=1`, {
+            headers: { 'Authorization': `Bearer ${token || 'test'}` }
+        });
+        return response.ok || response.status === 401; // 401 is expected without auth
+    } catch (error) {
+        console.error('Connection test failed:', error);
+        return false;
+    }
+}
+
+// Show connection status
+async function checkConnection() {
+    const isConnected = await testConnection();
+    if (!isConnected) {
+        showToast('Unable to connect to database. Please check your internet connection.', 'error');
+    }
+    return isConnected;
+}
 const APP_NAME = 'ScholarSync';
 const APP_VERSION = '2.1.0';
 
@@ -220,19 +242,22 @@ function getInitials(name) {
  * Initialize application
  */
 function initApp() {
+    // Test database connection
+    checkConnection();
+
     // Update current date
     updateCurrentDate();
-    
+
     // Check if user is already logged in
     if (token) {
         verifyToken();
     } else {
         showAuthTab('login');
     }
-    
+
     // Set up event listeners
     setupEventListeners();
-    
+
     // Update date every minute
     setInterval(updateCurrentDate, 60000);
 }
