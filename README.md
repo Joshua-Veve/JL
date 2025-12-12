@@ -25,8 +25,8 @@ This is a web-based digital library catalogue system for Academic City Universit
 3. For frontend: Open index.html in browser (or serve via a local server)
 
 ## Deployment Links
-- Backend: [Render URL]
-- Frontend: [GitHub Pages URL]
+- Backend: https://jl-cezp.onrender.com
+- Frontend: [GitHub Pages URL - to be deployed]
 
 ## Feature Checklist
 - [x] User Registration & Authentication
