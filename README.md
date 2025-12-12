@@ -16,13 +16,14 @@ This is a web-based digital library catalogue system for Academic City Universit
 - Deployment: Backend on Render, Frontend on GitHub Pages
 
 ## Login Details
-- Admin: admin@acu.edu | password123
-- Student: kwame.mensah@acu.edu | password123
+- **Student Account**: student@academiccity.edu | student123
+- **Admin Account**: admin@library.com | admin123
+- Test User: test@example.com | password123 (for testing the production system)
 
 ## Installation Instructions
 1. Clone the repository
-2. For backend: `cd backend && npm install && npm start`
-3. For frontend: Open index.html in browser (or serve via a local server)
+2. For backend: `cd backend && npm install && npm start` (for local development only)
+3. For frontend: Visit the deployed version at https://joshua-veve.github.io/JL/
 
 ## Deployment Links
 - Backend: https://jl-cezp.onrender.com
