@@ -18,12 +18,14 @@ function showTab(tab) {
 
 function showDashboard() {
   document.getElementById('auth-section').style.display = 'none';
+  document.getElementById('main-header').style.display = 'block';
   if (currentUser.role === 'admin') {
     document.getElementById('admin-panel').style.display = 'block';
     loadAdminBooks();
     loadAdminBorrowed();
   } else {
     document.getElementById('student-dashboard').style.display = 'block';
+    updateDashboardStats();
     searchBooks();
     loadBorrowedBooks();
   }
@@ -35,6 +37,7 @@ function logout() {
   currentUser = null;
   token = null;
   document.getElementById('auth-section').style.display = 'block';
+  document.getElementById('main-header').style.display = 'none';
   document.getElementById('student-dashboard').style.display = 'none';
   document.getElementById('admin-panel').style.display = 'none';
 }
@@ -124,17 +127,20 @@ async function searchBooks() {
 }
 
 function displayBooks(books) {
-  const list = document.getElementById('book-list');
-  list.innerHTML = '';
+  const container = document.getElementById('book-list');
+  container.innerHTML = '';
   books.forEach(book => {
-    const li = document.createElement('li');
-    li.className = 'book-item';
-    li.innerHTML = `
-      <strong>${book.title}</strong> by ${book.author}<br>
-      ISBN: ${book.isbn} | Category: ${book.category} | Available: ${book.available ? 'Yes' : 'No'}
-      ${book.available ? `<button class="borrow-btn" onclick="borrowBook(${book.id})">Borrow</button>` : ''}
+    const card = document.createElement('div');
+    card.className = 'book-card';
+    card.innerHTML = `
+      <h4>${book.title}</h4>
+      <p><strong>Author:</strong> ${book.author}</p>
+      <p><strong>ISBN:</strong> ${book.isbn}</p>
+      <p><strong>Category:</strong> ${book.category}</p>
+      <p><strong>Available:</strong> ${book.available ? 'Yes' : 'No'}</p>
+      ${book.available ? `<button class="borrow-btn" onclick="borrowBook(${book.id})">Borrow Book</button>` : '<span style="color: #ff6b6b;">Currently Unavailable</span>'}
     `;
-    list.appendChild(li);
+    container.appendChild(card);
   });
 }
 
@@ -167,17 +173,20 @@ async function loadBorrowedBooks() {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     const borrowed = await response.json();
-    const list = document.getElementById('borrowed-list');
-    list.innerHTML = '';
+    const container = document.getElementById('borrowed-list');
+    container.innerHTML = '';
     borrowed.forEach(item => {
-      const li = document.createElement('li');
-      li.className = 'book-item';
-      li.innerHTML = `
-        <strong>${item.title}</strong> by ${item.author}<br>
-        Borrowed: ${new Date(item.borrowed_date).toLocaleDateString()} | Due: ${new Date(item.due_date).toLocaleDateString()} | Returned: ${item.returned ? 'Yes' : 'No'}
-        ${!item.returned ? `<button class="borrow-btn" onclick="returnBook(${item.id})">Return</button>` : ''}
+      const card = document.createElement('div');
+      card.className = 'book-card';
+      card.innerHTML = `
+        <h4>${item.title}</h4>
+        <p><strong>Author:</strong> ${item.author}</p>
+        <p><strong>Borrowed Date:</strong> ${new Date(item.borrowed_date).toLocaleDateString()}</p>
+        <p><strong>Due Date:</strong> ${new Date(item.due_date).toLocaleDateString()}</p>
+        <p><strong>Status:</strong> ${item.returned ? '<span style="color: #4caf50;">Returned</span>' : '<span style="color: #ff6b6b;">Borrowed</span>'}</p>
+        ${!item.returned ? `<button class="borrow-btn" onclick="returnBook(${item.id})">Return Book</button>` : ''}
       `;
-      list.appendChild(li);
+      container.appendChild(card);
     });
   } catch (err) {
     showMessage('Error loading borrowed books', 'error');
@@ -238,18 +247,23 @@ async function loadAdminBooks() {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     const books = await response.json();
-    const list = document.getElementById('admin-book-list');
-    list.innerHTML = '';
+    const container = document.getElementById('admin-book-list');
+    container.innerHTML = '';
     books.forEach(book => {
-      const li = document.createElement('li');
-      li.className = 'book-item';
-      li.innerHTML = `
-        <strong>${book.title}</strong> by ${book.author}<br>
-        ISBN: ${book.isbn} | Category: ${book.category} | Available: ${book.available ? 'Yes' : 'No'}
-        <button class="borrow-btn" onclick="editBook(${book.id})">Edit</button>
-        <button class="borrow-btn" onclick="deleteBook(${book.id})">Delete</button>
+      const card = document.createElement('div');
+      card.className = 'book-card';
+      card.innerHTML = `
+        <h4>${book.title}</h4>
+        <p><strong>Author:</strong> ${book.author}</p>
+        <p><strong>ISBN:</strong> ${book.isbn}</p>
+        <p><strong>Category:</strong> ${book.category}</p>
+        <p><strong>Available:</strong> ${book.available ? 'Yes' : 'No'}</p>
+        <div style="display: flex; gap: 10px; margin-top: 15px;">
+          <button class="borrow-btn" onclick="editBook(${book.id})" style="flex: 1;">Edit</button>
+          <button class="borrow-btn" onclick="deleteBook(${book.id})" style="flex: 1; background: #dc3545;">Delete</button>
+        </div>
       `;
-      list.appendChild(li);
+      container.appendChild(card);
     });
   } catch (err) {
     showMessage('Error loading books', 'error');
@@ -315,16 +329,20 @@ async function loadAdminBorrowed() {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     const borrowed = await response.json();
-    const list = document.getElementById('admin-borrowed-list');
-    list.innerHTML = '';
+    const container = document.getElementById('admin-borrowed-list');
+    container.innerHTML = '';
     borrowed.forEach(item => {
-      const li = document.createElement('li');
-      li.className = 'book-item';
-      li.innerHTML = `
-        <strong>${item.title}</strong> by ${item.author}<br>
-        Borrower: ${item.full_name} | Borrowed: ${new Date(item.borrowed_date).toLocaleDateString()} | Due: ${new Date(item.due_date).toLocaleDateString()} | Returned: ${item.returned ? 'Yes' : 'No'}
+      const card = document.createElement('div');
+      card.className = 'book-card';
+      card.innerHTML = `
+        <h4>${item.title}</h4>
+        <p><strong>Author:</strong> ${item.author}</p>
+        <p><strong>Borrower:</strong> ${item.full_name}</p>
+        <p><strong>Borrowed Date:</strong> ${new Date(item.borrowed_date).toLocaleDateString()}</p>
+        <p><strong>Due Date:</strong> ${new Date(item.due_date).toLocaleDateString()}</p>
+        <p><strong>Status:</strong> ${item.returned ? '<span style="color: #4caf50;">Returned</span>' : '<span style="color: #ff6b6b;">Borrowed</span>'}</p>
       `;
-      list.appendChild(li);
+      container.appendChild(card);
     });
   } catch (err) {
     showMessage('Error loading borrowed books', 'error');
@@ -344,4 +362,43 @@ function setLoading(button, loading) {
   } else {
     button.innerHTML = button.dataset.originalText || 'Submit';
   }
+}
+
+// Dashboard stats function
+async function updateDashboardStats() {
+  try {
+    const response = await fetch(`${API_BASE}/api/borrow/my`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const borrowed = await response.json();
+    
+    const borrowedCount = borrowed.filter(item => !item.returned).length;
+    const dueSoonCount = borrowed.filter(item => {
+      if (item.returned) return false;
+      const dueDate = new Date(item.due_date);
+      const now = new Date();
+      const diffTime = dueDate - now;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return diffDays <= 7 && diffDays >= 0;
+    }).length;
+    
+    document.getElementById('borrowed-count').textContent = borrowedCount;
+    document.getElementById('due-count').textContent = dueSoonCount;
+  } catch (err) {
+    console.error('Error updating dashboard stats:', err);
+  }
+}
+
+// Admin tab functions
+function showAdminTab(tab) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`[onclick="showAdminTab('${tab}')"]`).classList.add('active');
+  
+  document.getElementById('manage-books-tab').style.display = tab === 'manage-books' ? 'block' : 'none';
+  document.getElementById('borrowing-records-tab').style.display = tab === 'borrowing-records' ? 'block' : 'none';
+}
+
+function showAddBookForm() {
+  const formSection = document.getElementById('add-book-form-section');
+  formSection.style.display = formSection.style.display === 'none' ? 'block' : 'none';
 }
