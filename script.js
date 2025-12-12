@@ -2,7 +2,7 @@
 // CONFIGURATION & GLOBAL VARIABLES
 // ============================================
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = 'https://jl-cezp.onrender.com';
 
 const APP_NAME = 'ScholarSync';
 const APP_VERSION = '2.1.0';
