@@ -6,8 +6,8 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  background: #ffffff;
-  color: #1a1a1a;
+  background: #1a1a1a;
+  color: #e5e5e5;
   margin: 0;
   padding: 0;
   display: flex;
@@ -18,10 +18,10 @@ body {
 }
 
 .container {
-  background: #ffffff;
+  background: #2a2a2a;
   padding: 48px;
   border-radius: 12px;
-  border: 1px solid #e5e5e5;
+  border: 1px solid #404040;
   width: 100%;
   max-width: 480px;
   position: relative;
@@ -34,12 +34,12 @@ body {
   left: 0;
   right: 0;
   height: 4px;
-  background: #a31f34;
+  background: #4caf50;
 }
 
 h1 {
   text-align: center;
-  color: #a31f34;
+  color: #4caf50;
   margin-bottom: 32px;
   font-weight: 600;
   font-size: 28px;
@@ -48,7 +48,7 @@ h1 {
 
 h2 {
   text-align: center;
-  color: #a31f34;
+  color: #4caf50;
   margin-bottom: 24px;
   font-weight: 500;
   font-size: 20px;
@@ -60,10 +60,10 @@ h2 {
   justify-content: center;
   margin-bottom: 32px;
   gap: 4px;
-  background: #f8f8f8;
+  background: #333333;
   padding: 4px;
   border-radius: 8px;
-  border: 1px solid #e5e5e5;
+  border: 1px solid #404040;
 }
 
 .tab {
@@ -75,33 +75,45 @@ h2 {
   font-weight: 500;
   flex: 1;
   text-align: center;
-  color: #666;
+  color: #cccccc;
   border: none;
 }
 
 .tab.active {
-  background: #a31f34;
-  color: white;
+  background: #4caf50;
+  color: #1a1a1a;
 }
 
 .tab:hover:not(.active) {
-  background: #f0f0f0;
-  color: #333;
+  background: #404040;
+  color: #e5e5e5;
 }
 
 form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: #e5e5e5;
+  font-size: 14px;
 }
 
 input {
   width: 100%;
   padding: 16px 20px;
-  border: 1px solid #d1d1d1;
+  border: 1px solid #555555;
   border-radius: 8px;
-  background: #ffffff;
-  color: #1a1a1a;
+  background: #333333;
+  color: #e5e5e5;
   font-size: 16px;
   font-family: 'Inter', sans-serif;
   transition: border-color 0.15s ease;
@@ -109,17 +121,17 @@ input {
 }
 
 input:focus {
-  border-color: #a31f34;
+  border-color: #4caf50;
 }
 
 input::placeholder {
-  color: #999;
+  color: #999999;
 }
 
 button {
   padding: 16px 32px;
-  background: #a31f34;
-  color: white;
+  background: #4caf50;
+  color: #1a1a1a;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -131,7 +143,7 @@ button {
 }
 
 button:hover {
-  background: #8b1d2f;
+  background: #45a049;
 }
 
 .message {
@@ -144,15 +156,15 @@ button:hover {
 }
 
 .error {
-  background: #fef2f2;
-  color: #dc2626;
-  border: 1px solid #fecaca;
+  background: #2d1b1b;
+  color: #ff6b6b;
+  border: 1px solid #4d2c2c;
 }
 
 .success {
-  background: #f0fdf4;
-  color: #16a34a;
-  border: 1px solid #bbf7d0;
+  background: #1b2d1b;
+  color: #4caf50;
+  border: 1px solid #2c4d2c;
 }
 
 .book-list {
@@ -164,27 +176,27 @@ button:hover {
 }
 
 .book-item {
-  background: #ffffff;
+  background: #333333;
   margin-bottom: 12px;
   padding: 20px;
   border-radius: 8px;
-  border: 1px solid #e5e5e5;
+  border: 1px solid #404040;
   transition: border-color 0.15s ease;
-  border-left: 3px solid #a31f34;
+  border-left: 3px solid #4caf50;
 }
 
 .book-item:hover {
-  border-color: #a31f34;
+  border-color: #4caf50;
 }
 
 .book-item strong {
-  color: #a31f34;
+  color: #4caf50;
   font-weight: 600;
 }
 
 .borrow-btn {
-  background: #a31f34;
-  color: white;
+  background: #4caf50;
+  color: #1a1a1a;
   border: none;
   padding: 8px 16px;
   border-radius: 6px;
@@ -198,16 +210,16 @@ button:hover {
 }
 
 .borrow-btn:hover {
-  background: #8b1d2f;
+  background: #45a049;
 }
 
 .loading {
   display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2px solid #e5e5e5;
+  border: 2px solid #555555;
   border-radius: 50%;
-  border-top-color: #a31f34;
+  border-top-color: #4caf50;
   animation: spin 1s linear infinite;
   margin-right: 8px;
 }
