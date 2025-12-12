@@ -2,29 +2,8 @@
 // CONFIGURATION & GLOBAL VARIABLES
 // ============================================
 
-const API_BASE = 'https://jl-cezp.onrender.com';
+const API_BASE = 'http://localhost:5000';
 
-// Test database connection
-async function testConnection() {
-    try {
-        const response = await fetch(`${API_BASE}/api/books/search?limit=1`, {
-            headers: { 'Authorization': `Bearer ${token || 'test'}` }
-        });
-        return response.ok || response.status === 401; // 401 is expected without auth
-    } catch (error) {
-        console.error('Connection test failed:', error);
-        return false;
-    }
-}
-
-// Show connection status
-async function checkConnection() {
-    const isConnected = await testConnection();
-    if (!isConnected) {
-        showToast('Unable to connect to database. Please check your internet connection.', 'error');
-    }
-    return isConnected;
-}
 const APP_NAME = 'ScholarSync';
 const APP_VERSION = '2.1.0';
 
@@ -41,6 +20,38 @@ let isLoading = false;
 const authScreen = document.getElementById('auth-screen');
 const appContainer = document.getElementById('app-container');
 const loadingOverlay = document.getElementById('loading-overlay');
+
+// ============================================
+// CONNECTION TESTING FUNCTIONS
+// ============================================
+
+// Test database connection
+async function testConnection() {
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
+        const response = await fetch(`${API_BASE}/api/books/search?limit=1`, {
+            headers: { 'Authorization': `Bearer ${token || 'test'}` },
+            signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+        return response.ok || response.status === 401; // 401 is expected without auth
+    } catch (error) {
+        console.error('Connection test failed:', error);
+        return false;
+    }
+}
+
+// Show connection status
+async function checkConnection() {
+    const isConnected = await testConnection();
+    if (!isConnected) {
+        showToast('Unable to connect to database. Please check your internet connection.', 'error');
+    }
+    return isConnected;
+}
 
 // ============================================
 // UTILITY FUNCTIONS
@@ -241,25 +252,43 @@ function getInitials(name) {
 /**
  * Initialize application
  */
-function initApp() {
-    // Test database connection
-    checkConnection();
+async function initApp() {
+    // Force hide loading after 10 seconds as fallback
+    const fallbackTimer = setTimeout(() => {
+        console.log('Fallback: Hiding loading overlay');
+        hideLoading();
+    }, 10000);
 
-    // Update current date
-    updateCurrentDate();
+    try {
+        console.log('Initializing app...');
 
-    // Check if user is already logged in
-    if (token) {
-        verifyToken();
-    } else {
-        showAuthTab('login');
+        // Test database connection
+        await checkConnection();
+
+        // Update current date
+        updateCurrentDate();
+
+        // Check if user is already logged in
+        if (token) {
+            await verifyToken();
+        } else {
+            showAuthTab('login');
+        }
+
+        // Set up event listeners
+        setupEventListeners();
+
+        // Update date every minute
+        setInterval(updateCurrentDate, 60000);
+
+        console.log('App initialized successfully');
+    } catch (error) {
+        console.error('Error during app initialization:', error);
+    } finally {
+        // Always hide loading overlay
+        clearTimeout(fallbackTimer);
+        hideLoading();
     }
-
-    // Set up event listeners
-    setupEventListeners();
-
-    // Update date every minute
-    setInterval(updateCurrentDate, 60000);
 }
 
 /**
@@ -445,25 +474,35 @@ async function handleRegister(e) {
  * Verify token validity
  */
 async function verifyToken() {
+    if (!token) {
+        showAuthTab('login');
+        return;
+    }
+
     try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
         const response = await fetch(`${API_BASE}/api/auth/verify`, {
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: { 'Authorization': `Bearer ${token}` },
+            signal: controller.signal
         });
-        
+
+        clearTimeout(timeoutId);
+
         if (response.ok) {
-            const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
-            currentUser = JSON.parse(userData);
+            const data = await response.json();
+            currentUser = data.user;
+            localStorage.setItem('user', JSON.stringify(currentUser));
             showMainApp();
         } else {
+            // Token is invalid, clear it and show login
             logout();
         }
     } catch (error) {
         console.error('Token verification failed:', error);
-        // Show warning but allow offline mode
-        if (currentUser) {
-            showMainApp();
-            showToast('Connected in limited mode. Some features may not work.', 'warning');
-        }
+        // If verification fails, clear token and show login
+        logout();
     }
 }
 
