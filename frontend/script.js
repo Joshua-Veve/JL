@@ -41,6 +41,10 @@ function logout() {
 
 document.getElementById('login').addEventListener('submit', async (e) => {
   e.preventDefault();
+  const button = e.target.querySelector('button');
+  button.dataset.originalText = button.innerHTML;
+  setLoading(button, true);
+
   const email = document.getElementById('login-email').value;
   const password = document.getElementById('login-password').value;
 
@@ -61,12 +65,18 @@ document.getElementById('login').addEventListener('submit', async (e) => {
       showMessage(data.error, 'error');
     }
   } catch (err) {
-    showMessage('An error occurred', 'error');
+    showMessage('Connection failed. Please check your internet connection.', 'error');
+  } finally {
+    setLoading(button, false);
   }
 });
 
 document.getElementById('register').addEventListener('submit', async (e) => {
   e.preventDefault();
+  const button = e.target.querySelector('button');
+  button.dataset.originalText = button.innerHTML;
+  setLoading(button, true);
+
   const full_name = document.getElementById('reg-fullname').value;
   const email = document.getElementById('reg-email').value;
   const password = document.getElementById('reg-password').value;
@@ -85,7 +95,9 @@ document.getElementById('register').addEventListener('submit', async (e) => {
       showMessage(data.error, 'error');
     }
   } catch (err) {
-    showMessage('An error occurred', 'error');
+    showMessage('Connection failed. Please check your internet connection.', 'error');
+  } finally {
+    setLoading(button, false);
   }
 });
 
@@ -321,6 +333,15 @@ async function loadAdminBorrowed() {
 
 function showMessage(msg, type) {
   const messageDiv = document.getElementById('message');
-  messageDiv.innerHTML = `<div class="${type}">${msg}</div>`;
-  setTimeout(() => messageDiv.innerHTML = '', 3000);
+  messageDiv.innerHTML = `<div class="message ${type}">${msg}</div>`;
+  setTimeout(() => messageDiv.innerHTML = '', 5000);
+}
+
+function setLoading(button, loading) {
+  button.disabled = loading;
+  if (loading) {
+    button.innerHTML = '<div class="loading"></div>Loading...';
+  } else {
+    button.innerHTML = button.dataset.originalText || 'Submit';
+  }
 }
