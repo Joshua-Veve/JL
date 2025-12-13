@@ -20,19 +20,20 @@ const authenticate = (req, res, next) => {
 
 // Borrow a book
 router.post('/', authenticate, async (req, res) => {
-  const { book_id } = req.body;
+  const { bookId, book_id } = req.body;
+  const bookIdToUse = bookId || book_id; // Support both naming conventions
   const user_id = req.user.id;
 
   try {
     // Check if book is available
-    const bookResult = await pool.query('SELECT * FROM books WHERE id = $1', [book_id]);
+    const bookResult = await pool.query('SELECT * FROM books WHERE id = $1', [bookIdToUse]);
     if (bookResult.rows.length === 0) return res.status(404).json({ error: 'Book not found' });
     if (!bookResult.rows[0].available) return res.status(400).json({ error: 'Book not available' });
 
     // Check if user already borrowed this book and not returned
     const borrowCheck = await pool.query(
       'SELECT * FROM borrowed_books WHERE user_id = $1 AND book_id = $2 AND returned = FALSE',
-      [user_id, book_id]
+      [user_id, bookIdToUse]
     );
     if (borrowCheck.rows.length > 0) return res.status(400).json({ error: 'Book already borrowed' });
 
@@ -41,11 +42,11 @@ router.post('/', authenticate, async (req, res) => {
     due_date.setDate(due_date.getDate() + 14); // 14 days due
     const result = await pool.query(
       'INSERT INTO borrowed_books (user_id, book_id, due_date) VALUES ($1, $2, $3) RETURNING *',
-      [user_id, book_id, due_date]
+      [user_id, bookIdToUse, due_date]
     );
 
     // Update book availability
-    await pool.query('UPDATE books SET available = FALSE WHERE id = $1', [book_id]);
+    await pool.query('UPDATE books SET available = FALSE WHERE id = $1', [bookIdToUse]);
 
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -99,6 +100,22 @@ router.get('/', authenticate, async (req, res) => {
       `SELECT bb.*, u.full_name, b.title, b.author FROM borrowed_books bb
        JOIN users u ON bb.user_id = u.id
        JOIN books b ON bb.book_id = b.id`
+    );
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Get books due soon (for current user)
+router.get('/due-soon', authenticate, async (req, res) => {
+  const user_id = req.user.id;
+  try {
+    const result = await pool.query(
+      `SELECT bb.*, b.title, b.author, b.isbn FROM borrowed_books bb
+       JOIN books b ON bb.book_id = b.id
+       WHERE bb.user_id = $1 AND bb.returned = FALSE AND bb.due_date <= CURRENT_DATE + INTERVAL '7 days'`,
+      [user_id]
     );
     res.json(result.rows);
   } catch (err) {

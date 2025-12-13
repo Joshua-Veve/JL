@@ -59,6 +59,36 @@ router.get('/search', async (req, res) => {
   }
 });
 
+// Get recent books
+router.get('/recent', async (req, res) => {
+  const limit = req.query.limit || 10;
+  try {
+    const result = await pool.query('SELECT * FROM books ORDER BY created_at DESC LIMIT $1', [limit]);
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Get dashboard stats
+router.get('/stats', async (req, res) => {
+  try {
+    const totalBooks = await pool.query('SELECT COUNT(*) FROM books');
+    const availableBooks = await pool.query('SELECT COUNT(*) FROM books WHERE available = true');
+    const borrowedBooks = await pool.query('SELECT COUNT(*) FROM borrowed_books WHERE returned = false');
+    const overdueBooks = await pool.query("SELECT COUNT(*) FROM borrowed_books WHERE returned = false AND due_date < CURRENT_DATE");
+
+    res.json({
+      totalBooks: parseInt(totalBooks.rows[0].count),
+      availableBooks: parseInt(availableBooks.rows[0].count),
+      borrowedBooks: parseInt(borrowedBooks.rows[0].count),
+      overdueBooks: parseInt(overdueBooks.rows[0].count)
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Add book (admin only)
 router.post('/', authenticate, async (req, res) => {
   if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin access required' });

@@ -335,7 +335,42 @@
 
                     <!-- Stats Cards -->
                     <div class="stats-grid" id="stats-grid">
-                        <!-- Stats will be loaded dynamically -->
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h4>Total Books</h4>
+                                <div class="stat-value" id="total-books">0</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-book-open"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h4>Available Books</h4>
+                                <div class="stat-value" id="available-books">0</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-hand-holding"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h4>Borrowed Books</h4>
+                                <div class="stat-value" id="borrowed-books">0</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h4>Overdue Books</h4>
+                                <div class="stat-value" id="overdue-books">0</div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Quick Actions -->
@@ -486,7 +521,9 @@
                     </div>
 
                     <div class="books-container grid-view" id="books-container">
-                        <!-- Books will be loaded dynamically -->
+                        <div class="books-grid" id="books-grid">
+                            <!-- Books will be loaded dynamically -->
+                        </div>
                     </div>
 
                     <div class="pagination" id="pagination">
