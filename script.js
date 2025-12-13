@@ -3,9 +3,7 @@ const API_BASE = 'https://jl-cezp.onrender.com';
 let currentUser = null;
 let token = localStorage.getItem('token');
 
-// Initialize application
 document.addEventListener('DOMContentLoaded', () => {
-  // Check for local file protocol
   if (location.protocol === 'file:') {
     const warning = document.getElementById('file-warning');
     if (warning) {
@@ -13,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
   
-  // Initialize UI based on authentication state
   if (token) {
     try {
       currentUser = JSON.parse(localStorage.getItem('user'));
@@ -24,12 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
   
-  // Add event listeners for better UX
   setupEventListeners();
 });
 
 function setupEventListeners() {
-  // Allow form submission with Enter key
   document.querySelectorAll('input').forEach(input => {
     input.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
@@ -44,18 +39,14 @@ function setupEventListeners() {
 }
 
 function showTab(tab) {
-  // Update active tab
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelector(`[onclick="showTab('${tab}')"]`).classList.add('active');
   
-  // Show appropriate form
   document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
   document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
   
-  // Clear messages
   clearMessage();
   
-  // Reset forms when switching tabs
   if (tab === 'login') {
     document.getElementById('login').reset();
   } else if (tab === 'register') {
@@ -90,16 +81,13 @@ function logout() {
   document.getElementById('student-dashboard').style.display = 'none';
   document.getElementById('admin-panel').style.display = 'none';
   
-  // Reset forms
   document.getElementById('login').reset();
   document.getElementById('register').reset();
   
-  // Show login tab
   showTab('login');
   showMessage('Logged out successfully', 'success');
 }
 
-// Login handler
 document.getElementById('login').addEventListener('submit', async (e) => {
   e.preventDefault();
   const button = e.target.querySelector('button');
@@ -147,7 +135,6 @@ document.getElementById('register').addEventListener('submit', async (e) => {
   const email = document.getElementById('reg-email').value.trim();
   const password = document.getElementById('reg-password').value;
   
-  // Basic validation
   if (password.length < 6) {
     showMessage('Password must be at least 6 characters long', 'error');
     setLoading(button, false, originalText);
@@ -178,7 +165,6 @@ document.getElementById('register').addEventListener('submit', async (e) => {
   }
 });
 
-// Student Functions
 async function searchBooks() {
   const title = document.getElementById('search-title').value.trim();
   const author = document.getElementById('search-author').value.trim();
@@ -355,7 +341,6 @@ async function returnBook(borrowId) {
   }
 }
 
-// Admin Functions
 document.getElementById('add-book').addEventListener('submit', async (e) => {
   e.preventDefault();
   const button = e.target.querySelector('button');
@@ -529,13 +514,11 @@ async function loadAdminBorrowed() {
   }
 }
 
-// Utility Functions
 function showMessage(msg, type = 'info') {
   clearMessage();
   const messageDiv = document.getElementById('message');
   messageDiv.innerHTML = `<div class="message ${type}">${msg}</div>`;
   
-  // Auto-hide success messages after 5 seconds
   if (type === 'success') {
     setTimeout(clearMessage, 5000);
   }

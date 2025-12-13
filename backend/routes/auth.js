@@ -5,11 +5,10 @@ const { pool } = require('../db');
 
 const router = express.Router();
 
-// Register
 router.post('/register', async (req, res) => {
   const { full_name, email, password, role } = req.body;
   try {
-    const userRole = role || 'student'; // Default to student if no role specified
+    const userRole = role || 'student';
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await pool.query(
       'INSERT INTO users (full_name, email, password_hash, role) VALUES ($1, $2, $3, $4) RETURNING *',
@@ -21,7 +20,6 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Login
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -39,7 +37,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Verify token
 router.get('/verify', async (req, res) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
   if (!token) return res.status(401).json({ error: 'Access denied' });

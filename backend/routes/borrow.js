@@ -4,7 +4,6 @@ const { pool } = require('../db');
 
 const router = express.Router();
 
-// Middleware to verify token
 const authenticate = (req, res, next) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
   if (!token) return res.status(401).json({ error: 'Access denied' });
@@ -18,34 +17,29 @@ const authenticate = (req, res, next) => {
   }
 };
 
-// Borrow a book
 router.post('/', authenticate, async (req, res) => {
   const { bookId, book_id } = req.body;
-  const bookIdToUse = bookId || book_id; // Support both naming conventions
+  const bookIdToUse = bookId || book_id;
   const user_id = req.user.id;
 
   try {
-    // Check if book is available
     const bookResult = await pool.query('SELECT * FROM books WHERE id = $1', [bookIdToUse]);
     if (bookResult.rows.length === 0) return res.status(404).json({ error: 'Book not found' });
     if (!bookResult.rows[0].available) return res.status(400).json({ error: 'Book not available' });
 
-    // Check if user already borrowed this book and not returned
     const borrowCheck = await pool.query(
       'SELECT * FROM borrowed_books WHERE user_id = $1 AND book_id = $2 AND returned = FALSE',
       [user_id, bookIdToUse]
     );
     if (borrowCheck.rows.length > 0) return res.status(400).json({ error: 'Book already borrowed' });
 
-    // Borrow the book
     const due_date = new Date();
-    due_date.setDate(due_date.getDate() + 14); // 14 days due
+    due_date.setDate(due_date.getDate() + 14);
     const result = await pool.query(
       'INSERT INTO borrowed_books (user_id, book_id, due_date) VALUES ($1, $2, $3) RETURNING *',
       [user_id, bookIdToUse, due_date]
     );
 
-    // Update book availability
     await pool.query('UPDATE books SET available = FALSE WHERE id = $1', [bookIdToUse]);
 
     res.status(201).json(result.rows[0]);
@@ -54,7 +48,7 @@ router.post('/', authenticate, async (req, res) => {
   }
 });
 
-// Return a book
+
 router.put('/:id/return', authenticate, async (req, res) => {
   const borrow_id = req.params.id;
   const user_id = req.user.id;
@@ -66,7 +60,6 @@ router.put('/:id/return', authenticate, async (req, res) => {
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Borrow record not found' });
 
-    // Update book availability
     await pool.query('UPDATE books SET available = TRUE WHERE id = $1', [result.rows[0].book_id]);
 
     res.json({ message: 'Book returned successfully' });
@@ -75,7 +68,6 @@ router.put('/:id/return', authenticate, async (req, res) => {
   }
 });
 
-// Get user's borrowed books
 router.get('/my', authenticate, async (req, res) => {
   const user_id = req.user.id;
   try {
@@ -91,7 +83,6 @@ router.get('/my', authenticate, async (req, res) => {
   }
 });
 
-// Get all borrowed books (admin only)
 router.get('/', authenticate, async (req, res) => {
   if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin access required' });
 
@@ -107,7 +98,6 @@ router.get('/', authenticate, async (req, res) => {
   }
 });
 
-// Get books due soon (for current user)
 router.get('/due-soon', authenticate, async (req, res) => {
   const user_id = req.user.id;
   try {

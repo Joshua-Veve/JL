@@ -1,4 +1,3 @@
-/* Professional, Desktop-first Responsive Styles */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
@@ -36,7 +35,6 @@ body {
   font-size: 16px;
 }
 
-/* Header */
 .site-header {
   background: var(--surface);
   padding: 1rem 2rem;
@@ -85,7 +83,7 @@ body {
   color: var(--primary);
 }
 
-/* Main Container */
+
 .container {
   max-width: 1200px;
   margin: 2rem auto;
@@ -101,7 +99,6 @@ h1 {
   line-height: 1.2;
 }
 
-/* File Warning */
 #file-warning {
   background: #fff3e0;
   color: #e65100;
@@ -113,7 +110,6 @@ h1 {
   border: 1px solid #ffb74d;
 }
 
-/* Tabs */
 .tabs {
   display: flex;
   justify-content: center;
@@ -151,7 +147,7 @@ h1 {
   color: var(--primary);
 }
 
-/* Auth Section */
+
 #auth-section {
   max-width: 400px;
   margin: 2rem auto;
@@ -172,7 +168,7 @@ h1 {
   font-weight: 600;
 }
 
-/* Forms */
+
 form {
   width: 100%;
 }
@@ -211,7 +207,7 @@ input::placeholder {
   color: var(--text-muted);
 }
 
-/* Buttons */
+
 button {
   background: var(--primary);
   color: white;
@@ -253,7 +249,6 @@ button.secondary:hover {
   color: var(--text-primary);
 }
 
-/* Dashboard Sections */
 #student-dashboard, #admin-panel {
   background: var(--surface);
   padding: 2rem;
@@ -283,7 +278,6 @@ button.secondary:hover {
   margin-bottom: 0;
 }
 
-/* Book Lists */
 .book-list {
   list-style: none;
   margin: 1.5rem 0;
@@ -368,7 +362,6 @@ button.secondary:hover {
   cursor: not-allowed;
 }
 
-/* Messages */
 #message {
   margin: 1rem auto;
   max-width: 600px;
@@ -400,7 +393,6 @@ button.secondary:hover {
   border: 1px solid #ffe0b2;
 }
 
-/* Loading Spinner */
 .loading {
   display: inline-block;
   width: 20px;
@@ -418,7 +410,6 @@ button.secondary:hover {
   100% { transform: rotate(360deg); }
 }
 
-/* Admin specific styles */
 .admin-controls {
   display: flex;
   justify-content: space-between;
@@ -430,7 +421,6 @@ button.secondary:hover {
   margin: 0;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .container {
     margin: 1rem auto;

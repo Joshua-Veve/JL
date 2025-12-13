@@ -18,7 +18,6 @@ const authenticate = (req, res, next) => {
   }
 };
 
-// Get all books
 router.get('/', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM books');

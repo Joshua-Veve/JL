@@ -101,7 +101,6 @@ document.getElementById('register').addEventListener('submit', async (e) => {
   }
 });
 
-// Student functions
 async function searchBooks() {
   const title = document.getElementById('search-title').value;
   const author = document.getElementById('search-author').value;
@@ -203,7 +202,6 @@ async function returnBook(borrowId) {
   }
 }
 
-// Admin functions
 document.getElementById('add-book').addEventListener('submit', async (e) => {
   e.preventDefault();
   const title = document.getElementById('book-title').value;

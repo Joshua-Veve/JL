@@ -12,7 +12,7 @@ body {
   padding: 0;
   min-height: 100vh;
   line-height: 1.5;
-  display: block; /* Changed from flex to block for full-width desktop layout */
+  display: block;
 }
 
 .container {
@@ -273,7 +273,7 @@ button:hover {
   to { transform: rotate(360deg); }
 }
 
-/* Custom scrollbar styling for dark theme */
+
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -291,7 +291,6 @@ button:hover {
   background: #666666;
 }
 
-/* Firefox scrollbar styling */
 * {
   scrollbar-width: thin;
   scrollbar-color: #555555 #2a2a2a;
@@ -375,7 +374,7 @@ button:hover {
 
   input, select {
     padding: 14px 18px;
-    font-size: 16px; /* Prevent zoom on iOS */
+    font-size: 16px;
   }
 
   button {
