@@ -17,7 +17,7 @@ This is a web-based digital library catalogue system for Academic City Universit
 
 ## Login Details
 - **Student Account**: student@academiccity.edu | student123
-- **Admin Account**: admin@library.com | admin123
+- **Admin Account**: admin@library.com | admin123 (to test out the admin capabilities as specified)
 - Test User: test@example.com | password123 (for testing the production system)
 
 ## Installation Instructions
