@@ -26,7 +26,12 @@ async function seedAdmin() {
       );
       console.log('Admin user seeded successfully');
     } else {
-      console.log('Admin user already exists');
+      // Update existing user to admin role and password
+      await pool.query(
+        'UPDATE users SET password_hash = $1, role = $2 WHERE email = $3',
+        [hashedPassword, 'admin', adminEmail]
+      );
+      console.log('Admin user updated successfully');
     }
   } catch (err) {
     console.error('Error seeding admin:', err);
