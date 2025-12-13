@@ -12,11 +12,13 @@
 
     <!-- Login/Register Section -->
     <div id="auth-section">
+      <div id="file-warning" style="display:none; text-align:center; background:#ffdfdf; color:#6a0000; padding:8px; border-radius:8px; margin-bottom:16px;">You are opening this file locally (file://). Please use a local server (Live Server) or GitHub Pages to avoid path showing in your browser.</div>
       <div class="tabs">
         <div class="tab active" onclick="showTab('login')">Login</div>
         <div class="tab" onclick="showTab('register')">Register</div>
       </div>
       <div id="login-form">
+        <div class="auth-card">
         <h2>Login</h2>
         <form id="login">
           <div class="form-group">
@@ -29,8 +31,10 @@
           </div>
           <button type="submit">Login</button>
         </form>
+        </div>
       </div>
       <div id="register-form" style="display: none;">
+        <div class="auth-card">
         <h2>Register</h2>
         <form id="register">
           <div class="form-group">
@@ -47,6 +51,7 @@
           </div>
           <button type="submit">Register</button>
         </form>
+        </div>
       </div>
     </div>
 

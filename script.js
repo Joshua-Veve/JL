@@ -3,6 +3,16 @@ const API_BASE = 'https://jl-cezp.onrender.com';
 let currentUser = null;
 let token = localStorage.getItem('token');
 
+// If page is opened locally with file://, show a warning to the user
+document.addEventListener('DOMContentLoaded', () => {
+  if (location.protocol === 'file:') {
+    const warning = document.getElementById('file-warning');
+    if (warning) {
+      warning.style.display = 'block';
+    }
+  }
+});
+
 if (token) {
   currentUser = JSON.parse(localStorage.getItem('user'));
   showDashboard();
