@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:5000';
+const API_BASE = 'https://jl-cezp.onrender.com';
 
 let currentUser = null;
 let token = localStorage.getItem('token');
