@@ -308,7 +308,7 @@ input, select, textarea {
     border: 2px solid var(--border-color);
     border-radius: var(--radius-md);
     background: var(--input-bg);
-    color: var(--gray-800);
+    color: var(--gray-100);
     font-size: 0.875rem;
     font-family: var(--font-sans);
     transition: all var(--transition-fast);
@@ -317,11 +317,11 @@ input, select, textarea {
 
 input:focus, select:focus, textarea:focus {
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
 input::placeholder {
-    color: var(--gray-400);
+    color: var(--gray-500);
 }
 
 .password-container {
