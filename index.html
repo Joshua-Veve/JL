@@ -3,124 +3,154 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Library Management System</title>
+  <title>Library Management System - Academic City University</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="site-header">
     <div class="brand">
-      <div class="logo">AC</div>
-      <div class="brand-title">Academic City University</div>
+      <div class="logo">ACU</div>
+      <div class="brand-title">Academic City University Library</div>
     </div>
-    <nav class="site-nav"><a href="#" style="color:var(--muted); text-decoration:none; font-size:14px;">Help</a></nav>
+    <nav class="site-nav">
+      <a href="#" style="color:var(--text-secondary); text-decoration:none; font-size:14px;">Help</a>
+    </nav>
   </header>
+  
   <div class="container">
     <h1>Library Management System</h1>
 
+    <!-- File Protocol Warning -->
+    <div id="file-warning" style="display:none;">
+      ⚠️ You are opening this file locally (file://). For best experience, use a local server or deploy to GitHub Pages.
+    </div>
+
     <!-- Login/Register Section -->
     <div id="auth-section">
-      <div id="file-warning" style="display:none; text-align:center; background:#ffdfdf; color:#6a0000; padding:8px; border-radius:8px; margin-bottom:16px;">You are opening this file locally (file://). Please use a local server (Live Server) or GitHub Pages to avoid path showing in your browser.</div>
       <div class="tabs">
         <div class="tab active" onclick="showTab('login')">Login</div>
         <div class="tab" onclick="showTab('register')">Register</div>
       </div>
+      
       <div id="login-form">
         <div class="auth-card">
-        <h2>Login</h2>
-        <form id="login">
-          <div class="form-group">
-            <label for="login-email">Email</label>
-            <input type="email" id="login-email" placeholder="Enter your email" required>
-          </div>
-          <div class="form-group">
-            <label for="login-password">Password</label>
-            <input type="password" id="login-password" placeholder="Enter your password" required>
-          </div>
-          <button type="submit">Login</button>
-        </form>
+          <h2>Login to Your Account</h2>
+          <form id="login">
+            <div class="form-group">
+              <label for="login-email">Email Address</label>
+              <input type="email" id="login-email" placeholder="student@example.com" required>
+            </div>
+            <div class="form-group">
+              <label for="login-password">Password</label>
+              <input type="password" id="login-password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit">Login</button>
+          </form>
         </div>
       </div>
+      
       <div id="register-form" style="display: none;">
         <div class="auth-card">
-        <h2>Register</h2>
-        <form id="register">
-          <div class="form-group">
-            <label for="reg-fullname">Full Name</label>
-            <input type="text" id="reg-fullname" placeholder="Enter your full name" required>
-          </div>
-          <div class="form-group">
-            <label for="reg-email">Email</label>
-            <input type="email" id="reg-email" placeholder="Enter your email" required>
-          </div>
-          <div class="form-group">
-            <label for="reg-password">Password</label>
-            <input type="password" id="reg-password" placeholder="Create a password" required>
-          </div>
-          <button type="submit">Register</button>
-        </form>
+          <h2>Create New Account</h2>
+          <form id="register">
+            <div class="form-group">
+              <label for="reg-fullname">Full Name</label>
+              <input type="text" id="reg-fullname" placeholder="John Doe" required>
+            </div>
+            <div class="form-group">
+              <label for="reg-email">Email Address</label>
+              <input type="email" id="reg-email" placeholder="student@example.com" required>
+            </div>
+            <div class="form-group">
+              <label for="reg-password">Password</label>
+              <input type="password" id="reg-password" placeholder="Minimum 6 characters" required minlength="6">
+            </div>
+            <button type="submit">Register</button>
+          </form>
         </div>
       </div>
     </div>
 
     <!-- Student Dashboard -->
     <div id="student-dashboard" style="display: none;">
-      <button onclick="logout()">Logout</button>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2>Welcome, <span id="user-name">Student</span></h2>
+        <button onclick="logout()" style="width: auto;">Logout</button>
+      </div>
+      
       <h2>Search Books</h2>
-      <div class="form-group">
-        <label for="search-title">Title</label>
-        <input type="text" id="search-title" placeholder="Enter book title">
+      <div class="search-filters">
+        <div class="form-group">
+          <label for="search-title">Title</label>
+          <input type="text" id="search-title" placeholder="Search by title">
+        </div>
+        <div class="form-group">
+          <label for="search-author">Author</label>
+          <input type="text" id="search-author" placeholder="Search by author">
+        </div>
+        <div class="form-group">
+          <label for="search-category">Category</label>
+          <select id="search-category">
+            <option value="">All Categories</option>
+            <option value="Computer Science">Computer Science</option>
+            <option value="Engineering">Engineering</option>
+            <option value="Mathematics">Mathematics</option>
+            <option value="Physics">Physics</option>
+            <option value="Business">Business</option>
+            <option value="Literature">Literature</option>
+          </select>
+        </div>
       </div>
-      <div class="form-group">
-        <label for="search-author">Author</label>
-        <input type="text" id="search-author" placeholder="Enter author name">
-      </div>
-      <div class="form-group">
-        <label for="search-category">Category</label>
-        <select id="search-category">
-          <option value="">All Categories</option>
-          <option value="Computer Science">Computer Science</option>
-          <option value="Engineering">Engineering</option>
-        </select>
-      </div>
-      <button onclick="searchBooks()">Search</button>
+      <button onclick="searchBooks()" style="width: auto;">Search Books</button>
+      
       <h2>Available Books</h2>
       <ul id="book-list" class="book-list"></ul>
+      
       <h2>My Borrowed Books</h2>
       <ul id="borrowed-list" class="book-list"></ul>
     </div>
 
     <!-- Admin Panel -->
     <div id="admin-panel" style="display: none;">
-      <button onclick="logout()">Logout</button>
-      <h2>Add Book</h2>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2>Admin Dashboard</h2>
+        <button onclick="logout()" style="width: auto;">Logout</button>
+      </div>
+      
+      <h2>Add New Book</h2>
       <form id="add-book">
-        <div class="form-group">
-          <label for="book-title">Title</label>
-          <input type="text" id="book-title" placeholder="Enter book title" required>
-        </div>
-        <div class="form-group">
-          <label for="book-author">Author</label>
-          <input type="text" id="book-author" placeholder="Enter author name" required>
-        </div>
-        <div class="form-group">
-          <label for="book-isbn">ISBN</label>
-          <input type="text" id="book-isbn" placeholder="Enter ISBN" required>
-        </div>
-        <div class="form-group">
-          <label for="book-category">Category</label>
-          <input type="text" id="book-category" placeholder="Enter category" required>
+        <div class="search-filters">
+          <div class="form-group">
+            <label for="book-title">Title</label>
+            <input type="text" id="book-title" placeholder="Book title" required>
+          </div>
+          <div class="form-group">
+            <label for="book-author">Author</label>
+            <input type="text" id="book-author" placeholder="Author name" required>
+          </div>
+          <div class="form-group">
+            <label for="book-isbn">ISBN</label>
+            <input type="text" id="book-isbn" placeholder="ISBN number" required>
+          </div>
+          <div class="form-group">
+            <label for="book-category">Category</label>
+            <input type="text" id="book-category" placeholder="Category" required>
+          </div>
         </div>
         <button type="submit">Add Book</button>
       </form>
-      <h2>All Books</h2>
+      
+      <h2>All Books in Library</h2>
       <ul id="admin-book-list" class="book-list"></ul>
+      
       <h2>All Borrowed Books</h2>
       <ul id="admin-borrowed-list" class="book-list"></ul>
     </div>
 
+    <!-- Messages Container -->
     <div id="message"></div>
   </div>
+  
   <script src="script.js"></script>
 </body>
-</html></content>
-<parameter name="filePath">c:\Users\kojob\Documents\Academic City Folders\LVL 300 SEM 1\Web Tech\JL\index.html
+</html>
