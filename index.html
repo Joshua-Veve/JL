@@ -1,684 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScholarSync | Library Management System</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library Management System</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Loading Overlay -->
-    <div id="loading-overlay" class="loading-overlay">
-        <div class="loading-spinner"></div>
-        <p>Loading ScholarSync...</p>
+  <div class="container">
+    <h1>Academic City University Library</h1>
+
+    <!-- Login/Register Section -->
+    <div id="auth-section">
+      <div class="tabs">
+        <div class="tab active" onclick="showTab('login')">Login</div>
+        <div class="tab" onclick="showTab('register')">Register</div>
+      </div>
+      <div id="login-form">
+        <h2>Login</h2>
+        <form id="login">
+          <div class="form-group">
+            <label for="login-email">Email</label>
+            <input type="email" id="login-email" placeholder="Enter your email" required>
+          </div>
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" placeholder="Enter your password" required>
+          </div>
+          <button type="submit">Login</button>
+        </form>
+      </div>
+      <div id="register-form" style="display: none;">
+        <h2>Register</h2>
+        <form id="register">
+          <div class="form-group">
+            <label for="reg-fullname">Full Name</label>
+            <input type="text" id="reg-fullname" placeholder="Enter your full name" required>
+          </div>
+          <div class="form-group">
+            <label for="reg-email">Email</label>
+            <input type="email" id="reg-email" placeholder="Enter your email" required>
+          </div>
+          <div class="form-group">
+            <label for="reg-password">Password</label>
+            <input type="password" id="reg-password" placeholder="Create a password" required>
+          </div>
+          <button type="submit">Register</button>
+        </form>
+      </div>
     </div>
 
-    <!-- Login/Register Screen -->
-    <div id="auth-screen" class="auth-screen">
-        <div class="auth-container">
-            <div class="auth-header">
-                <div class="logo">
-                    <i class="fas fa-book-open"></i>
-                    <h1>Scholar<span>Sync</span></h1>
-                </div>
-                <p class="auth-tagline">Smart Library Management for Modern Education</p>
-            </div>
+    <!-- Student Dashboard -->
+    <div id="student-dashboard" style="display: none;">
+      <button onclick="logout()">Logout</button>
+      <h2>Search Books</h2>
+      <div class="form-group">
+        <label for="search-title">Title</label>
+        <input type="text" id="search-title" placeholder="Enter book title">
+      </div>
+      <div class="form-group">
+        <label for="search-author">Author</label>
+        <input type="text" id="search-author" placeholder="Enter author name">
+      </div>
+      <div class="form-group">
+        <label for="search-category">Category</label>
+        <select id="search-category">
+          <option value="">All Categories</option>
+          <option value="Computer Science">Computer Science</option>
+          <option value="Engineering">Engineering</option>
+        </select>
+      </div>
+      <button onclick="searchBooks()">Search</button>
+      <h2>Available Books</h2>
+      <ul id="book-list" class="book-list"></ul>
+      <h2>My Borrowed Books</h2>
+      <ul id="borrowed-list" class="book-list"></ul>
+    </div>
 
-            <div class="auth-tabs">
-                <button class="auth-tab active" id="login-tab" onclick="showAuthTab('login')">
-                    <i class="fas fa-sign-in-alt"></i> Login
-                </button>
-                <button class="auth-tab" id="register-tab" onclick="showAuthTab('register')">
-                    <i class="fas fa-user-plus"></i> Register
-                </button>
-            </div>
-
-            <!-- Login Form -->
-            <form id="login-form" class="auth-form active">
-                <div class="form-group">
-                    <label for="login-email">
-                        <i class="fas fa-envelope"></i> Email Address
-                    </label>
-                    <input type="email" id="login-email" placeholder="student@academiccity.edu" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="login-password">
-                        <i class="fas fa-lock"></i> Password
-                    </label>
-                    <div class="password-container">
-                        <input type="password" id="login-password" placeholder="Enter your password" required>
-                        <button type="button" class="toggle-password" onclick="togglePassword('login-password')">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="form-options">
-                    <label class="checkbox">
-                        <input type="checkbox" id="remember-me">
-                        <span>Remember me</span>
-                    </label>
-                    <a href="#" class="forgot-password">Forgot Password?</a>
-                </div>
-
-                <button type="submit" class="btn btn-primary btn-block">
-                    <i class="fas fa-sign-in-alt"></i> Sign In
-                </button>
-
-                <div class="auth-divider">
-                    <span>Quick Access</span>
-                </div>
-
-                <div class="demo-credentials">
-                    <div class="demo-account">
-                        <h4><i class="fas fa-user-graduate"></i> Student Account</h4>
-                        <p>Email: student@academiccity.edu</p>
-                        <p>Password: student123</p>
-                    </div>
-                    <div class="demo-account">
-                        <h4><i class="fas fa-user-tie"></i> Admin Account</h4>
-                        <p>Email: admin@library.com</p>
-                        <p>Password: admin123</p>
-                    </div>
-                </div>
-            </form>
-
-            <!-- Register Form -->
-            <form id="register-form" class="auth-form">
-                <div class="form-group">
-                    <label for="register-fullname">
-                        <i class="fas fa-user"></i> Full Name
-                    </label>
-                    <input type="text" id="register-fullname" placeholder="John Doe" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="register-email">
-                        <i class="fas fa-envelope"></i> Email Address
-                    </label>
-                    <input type="email" id="register-email" placeholder="student@academiccity.edu" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="register-password">
-                        <i class="fas fa-lock"></i> Password
-                    </label>
-                    <div class="password-container">
-                        <input type="password" id="register-password" placeholder="Minimum 8 characters" required>
-                        <button type="button" class="toggle-password" onclick="togglePassword('register-password')">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                    <small class="password-hint">Must be 8+ characters with letters and numbers</small>
-                </div>
-
-                <div class="form-group">
-                    <label for="register-confirm-password">
-                        <i class="fas fa-lock"></i> Confirm Password
-                    </label>
-                    <div class="password-container">
-                        <input type="password" id="register-confirm-password" placeholder="Re-enter your password" required>
-                        <button type="button" class="toggle-password" onclick="togglePassword('register-confirm-password')">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="checkbox">
-                        <input type="checkbox" id="terms-agreement" required>
-                        <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
-                    </label>
-                </div>
-
-                <button type="submit" class="btn btn-primary btn-block">
-                    <i class="fas fa-user-plus"></i> Create Account
-                </button>
-            </form>
-
-            <div class="auth-footer">
-                <p>By continuing, you agree to ScholarSync's Terms of Service and Privacy Policy</p>
-            </div>
+    <!-- Admin Panel -->
+    <div id="admin-panel" style="display: none;">
+      <button onclick="logout()">Logout</button>
+      <h2>Add Book</h2>
+      <form id="add-book">
+        <div class="form-group">
+          <label for="book-title">Title</label>
+          <input type="text" id="book-title" placeholder="Enter book title" required>
         </div>
-
-        <div class="auth-illustration">
-            <div class="illustration-content">
-                <h2>Welcome to ScholarSync</h2>
-                <p>Your gateway to academic excellence and digital library management</p>
-                
-                <div class="features-list">
-                    <div class="feature">
-                        <i class="fas fa-book"></i>
-                        <h4>Digital Catalog</h4>
-                        <p>Access thousands of books instantly</p>
-                    </div>
-                    <div class="feature">
-                        <i class="fas fa-clock"></i>
-                        <h4>Smart Borrowing</h4>
-                        <p>Track due dates and renew online</p>
-                    </div>
-                    <div class="feature">
-                        <i class="fas fa-chart-line"></i>
-                        <h4>Reading Analytics</h4>
-                        <p>Monitor your reading progress</p>
-                    </div>
-                </div>
-            </div>
+        <div class="form-group">
+          <label for="book-author">Author</label>
+          <input type="text" id="book-author" placeholder="Enter author name" required>
         </div>
-    </div>
-
-    <!-- Main Application -->
-    <div id="app-container" class="app-container" style="display: none;">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo">
-                    <i class="fas fa-book-open"></i>
-                    <h1>Scholar<span>Sync</span></h1>
-                </div>
-                <button class="sidebar-toggle" onclick="toggleSidebar()">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-
-            <div class="user-profile">
-                <div class="user-avatar" id="user-avatar">
-                    <span id="user-initials">JD</span>
-                </div>
-                <div class="user-info">
-                    <h3 id="user-name">John Doe</h3>
-                    <p class="user-role" id="user-role">Student</p>
-                    <p class="user-id" id="user-id">ID: ACU2024001</p>
-                </div>
-                <div class="user-status">
-                    <span class="status-dot active"></span>
-                    <span>Online</span>
-                </div>
-            </div>
-
-            <nav class="sidebar-nav">
-                <div class="nav-section">
-                    <h4 class="nav-section-title">MAIN</h4>
-                    <a href="#dashboard" class="nav-link active" onclick="showSection('dashboard')">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span>Dashboard</span>
-                    </a>
-                    <a href="#books" class="nav-link" onclick="showSection('books')">
-                        <i class="fas fa-book"></i>
-                        <span>Browse Books</span>
-                        <span class="nav-badge" id="nav-available-count">1,234</span>
-                    </a>
-                    <a href="#borrowed" class="nav-link" onclick="showSection('borrowed')">
-                        <i class="fas fa-bookmark"></i>
-                        <span>My Books</span>
-                        <span class="nav-badge" id="nav-borrowed-count">5</span>
-                    </a>
-                    <a href="#history" class="nav-link" onclick="showSection('history')">
-                        <i class="fas fa-history"></i>
-                        <span>Reading History</span>
-                    </a>
-                </div>
-
-                <div class="nav-section">
-                    <h4 class="nav-section-title">ACTIVITIES</h4>
-                    <a href="#reservations" class="nav-link" onclick="showSection('reservations')">
-                        <i class="fas fa-calendar-check"></i>
-                        <span>Reservations</span>
-                        <span class="nav-badge warning" id="nav-pending-requests">2</span>
-                    </a>
-                    <a href="#recommendations" class="nav-link" onclick="showSection('recommendations')">
-                        <i class="fas fa-star"></i>
-                        <span>Recommendations</span>
-                    </a>
-                    <a href="#favorites" class="nav-link" onclick="showSection('favorites')">
-                        <i class="fas fa-heart"></i>
-                        <span>Favorites</span>
-                    </a>
-                </div>
-
-                <div class="nav-section">
-                    <h4 class="nav-section-title">SETTINGS</h4>
-                    <a href="#profile" class="nav-link" onclick="showSection('profile')">
-                        <i class="fas fa-user-cog"></i>
-                        <span>My Profile</span>
-                    </a>
-                    <a href="#notifications" class="nav-link" onclick="showSection('notifications')">
-                        <i class="fas fa-bell"></i>
-                        <span>Notifications</span>
-                        <span class="nav-badge danger" id="nav-notification-count">3</span>
-                    </a>
-                    <a href="#help" class="nav-link" onclick="showSection('help')">
-                        <i class="fas fa-question-circle"></i>
-                        <span>Help & Support</span>
-                    </a>
-                </div>
-            </nav>
-
-            <div class="sidebar-footer">
-                <button class="btn btn-logout" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Logout
-                </button>
-                <div class="system-info">
-                    <p>ScholarSync v2.1.0</p>
-                    <p class="copyright">© 2024 Academic City University</p>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Top Navigation Bar -->
-            <header class="top-bar">
-                <div class="top-bar-left">
-                    <div class="breadcrumb" id="breadcrumb">
-                        <a href="#dashboard">Dashboard</a>
-                        <i class="fas fa-chevron-right"></i>
-                        <span>Overview</span>
-                    </div>
-                </div>
-
-                <div class="top-bar-right">
-                    <div class="search-container">
-                        <i class="fas fa-search search-icon"></i>
-                        <input type="text" 
-                               class="search-input" 
-                               id="global-search" 
-                               placeholder="Search books, authors, categories..."
-                               onkeyup="searchBooks()">
-                        <button class="search-clear" onclick="clearSearch()">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-
-                    <div class="top-actions">
-                        <button class="action-btn" onclick="showNotifications()" title="Notifications">
-                            <i class="fas fa-bell"></i>
-                            <span class="badge" id="notification-badge">3</span>
-                        </button>
-                        <button class="action-btn" onclick="toggleDarkMode()" title="Toggle Theme">
-                            <i class="fas fa-moon"></i>
-                        </button>
-                        <button class="action-btn" onclick="showQuickActions()" title="Quick Actions">
-                            <i class="fas fa-bolt"></i>
-                        </button>
-                    </div>
-
-                    <div class="current-info">
-                        <div class="current-date" id="current-date"></div>
-                        <div class="server-status">
-                            <span class="status-dot online"></span>
-                            <span>Server Online</span>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Content Sections -->
-            <div class="content-wrapper">
-                <!-- Dashboard Section -->
-                <section id="dashboard-section" class="content-section active">
-                    <div class="section-header">
-                        <h2><i class="fas fa-tachometer-alt"></i> Dashboard Overview</h2>
-                        <div class="section-actions">
-                            <button class="btn btn-primary" onclick="showQuickBorrow()">
-                                <i class="fas fa-plus-circle"></i> Quick Borrow
-                            </button>
-                            <button class="btn btn-outline" onclick="refreshDashboard()">
-                                <i class="fas fa-sync-alt"></i> Refresh
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Stats Cards -->
-                    <div class="stats-grid" id="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-book"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h4>Total Books</h4>
-                                <div class="stat-value" id="total-books">0</div>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-book-open"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h4>Available Books</h4>
-                                <div class="stat-value" id="available-books">0</div>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-hand-holding"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h4>Borrowed Books</h4>
-                                <div class="stat-value" id="borrowed-books">0</div>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-exclamation-triangle"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h4>Overdue Books</h4>
-                                <div class="stat-value" id="overdue-books">0</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Quick Actions -->
-                    <div class="quick-actions">
-                        <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
-                        <div class="actions-grid">
-                            <button class="action-card" onclick="showAllBooks()">
-                                <i class="fas fa-search"></i>
-                                <span>Browse Catalog</span>
-                            </button>
-                            <button class="action-card" onclick="showBorrowedBooks()">
-                                <i class="fas fa-bookmark"></i>
-                                <span>My Borrowed</span>
-                            </button>
-                            <button class="action-card" onclick="showReservations()">
-                                <i class="fas fa-calendar-plus"></i>
-                                <span>Make Reservation</span>
-                            </button>
-                            <button class="action-card" onclick="showRenewals()">
-                                <i class="fas fa-redo"></i>
-                                <span>Renew Books</span>
-                            </button>
-                            <button class="action-card" onclick="showRecommendations()">
-                                <i class="fas fa-star"></i>
-                                <span>Get Recommendations</span>
-                            </button>
-                            <button class="action-card" onclick="showReadingGoals()">
-                                <i class="fas fa-chart-line"></i>
-                                <span>Reading Goals</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Recent Books -->
-                    <div class="section-row">
-                        <div class="section-col">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h3><i class="fas fa-book-medical"></i> Recently Added Books</h3>
-                                    <a href="#books" class="btn-link" onclick="showSection('books')">
-                                        View All <i class="fas fa-arrow-right"></i>
-                                    </a>
-                                </div>
-                                <div class="card-body">
-                                    <div class="books-grid compact" id="recent-books-grid">
-                                        <!-- Recent books will be loaded here -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="section-col">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h3><i class="fas fa-clock"></i> Due Soon</h3>
-                                    <button class="btn-link" onclick="renewAllBooks()">
-                                        Renew All <i class="fas fa-redo"></i>
-                                    </button>
-                                </div>
-                                <div class="card-body">
-                                    <div class="due-books-list" id="due-books-list">
-                                        <!-- Due books will be loaded here -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Reading Statistics -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-chart-bar"></i> Reading Statistics</h3>
-                            <select class="form-select small" onchange="updateReadingStats(this.value)">
-                                <option value="month">This Month</option>
-                                <option value="year">This Year</option>
-                                <option value="all">All Time</option>
-                            </select>
-                        </div>
-                        <div class="card-body">
-                            <div class="stats-chart" id="reading-stats">
-                                <!-- Chart will be loaded here -->
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Browse Books Section -->
-                <section id="books-section" class="content-section">
-                    <div class="section-header">
-                        <h2><i class="fas fa-book"></i> Browse Books</h2>
-                        <div class="section-actions">
-                            <button class="btn btn-primary" onclick="showAdvancedSearch()">
-                                <i class="fas fa-search-plus"></i> Advanced Search
-                            </button>
-                            <button class="btn btn-outline" onclick="exportBookList()">
-                                <i class="fas fa-download"></i> Export
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="filters-bar">
-                        <div class="filter-group">
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="search-title" 
-                                   placeholder="Search by title..."
-                                   onkeyup="searchBooks()">
-                        </div>
-                        <div class="filter-group">
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="search-author" 
-                                   placeholder="Search by author..."
-                                   onkeyup="searchBooks()">
-                        </div>
-                        <div class="filter-group">
-                            <select class="form-control" id="search-category" onchange="searchBooks()">
-                                <option value="">All Categories</option>
-                                <option value="Computer Science">Computer Science</option>
-                                <option value="Engineering">Engineering</option>
-                                <option value="Mathematics">Mathematics</option>
-                                <option value="Business">Business</option>
-                                <option value="Literature">Literature</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <select class="form-control" id="search-availability" onchange="searchBooks()">
-                                <option value="">All Books</option>
-                                <option value="available">Available Only</option>
-                                <option value="unavailable">Checked Out</option>
-                            </select>
-                        </div>
-                        <button class="btn btn-secondary" onclick="clearFilters()">
-                            <i class="fas fa-times"></i> Clear
-                        </button>
-                    </div>
-
-                    <div class="books-section-header">
-                        <h3 id="books-count">Loading books...</h3>
-                        <div class="view-toggle">
-                            <button class="view-btn active" onclick="setGridView()">
-                                <i class="fas fa-th-large"></i>
-                            </button>
-                            <button class="view-btn" onclick="setListView()">
-                                <i class="fas fa-list"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="books-container grid-view" id="books-container">
-                        <div class="books-grid" id="books-grid">
-                            <!-- Books will be loaded dynamically -->
-                        </div>
-                    </div>
-
-                    <div class="pagination" id="pagination">
-                        <!-- Pagination will be loaded here -->
-                    </div>
-                </section>
-
-                <!-- Borrowed Books Section -->
-                <section id="borrowed-section" class="content-section">
-                    <div class="section-header">
-                        <h2><i class="fas fa-bookmark"></i> My Borrowed Books</h2>
-                        <div class="section-actions">
-                            <button class="btn btn-primary" onclick="renewSelected()">
-                                <i class="fas fa-redo"></i> Renew Selected
-                            </button>
-                            <button class="btn btn-outline" onclick="downloadReceipt()">
-                                <i class="fas fa-print"></i> Print Receipt
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="borrowed-stats">
-                        <div class="stat-item">
-                            <span class="stat-label">Currently Borrowed</span>
-                            <span class="stat-value" id="current-borrowed-count">0</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Due Soon (≤ 3 days)</span>
-                            <span class="stat-value warning" id="due-soon-count">0</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Overdue</span>
-                            <span class="stat-value danger" id="overdue-count">0</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Total Fine</span>
-                            <span class="stat-value" id="total-fine">$0.00</span>
-                        </div>
-                    </div>
-
-                    <div class="table-responsive">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th><input type="checkbox" id="select-all" onchange="toggleSelectAll()"></th>
-                                    <th>Book Details</th>
-                                    <th>Borrow Date</th>
-                                    <th>Due Date</th>
-                                    <th>Days Left</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="borrowed-books-table">
-                                <!-- Borrowed books will be loaded here -->
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="empty-state" id="empty-borrowed">
-                        <i class="fas fa-book-open"></i>
-                        <h3>No Books Borrowed</h3>
-                        <p>You haven't borrowed any books yet. Start exploring our collection!</p>
-                        <button class="btn btn-primary" onclick="showSection('books')">
-                            <i class="fas fa-search"></i> Browse Books
-                        </button>
-                    </div>
-                </section>
-
-                <!-- More sections would follow similar pattern -->
-            </div>
-
-            <!-- Toast Notifications -->
-            <div id="toast-container" class="toast-container"></div>
-
-            <!-- Quick Actions Menu -->
-            <div id="quick-actions-menu" class="quick-actions-menu">
-                <div class="quick-actions-header">
-                    <h3>Quick Actions</h3>
-                    <button class="close-btn" onclick="hideQuickActions()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="quick-actions-body">
-                    <button class="quick-action" onclick="showQuickBorrow()">
-                        <i class="fas fa-book-medical"></i>
-                        <span>Borrow Book</span>
-                    </button>
-                    <button class="quick-action" onclick="showReservations()">
-                        <i class="fas fa-calendar-plus"></i>
-                        <span>Make Reservation</span>
-                    </button>
-                    <button class="quick-action" onclick="showRenewals()">
-                        <i class="fas fa-redo"></i>
-                        <span>Renew Books</span>
-                    </button>
-                    <button class="quick-action" onclick="showRecommendations()">
-                        <i class="fas fa-star"></i>
-                        <span>Get Recommendations</span>
-                    </button>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Quick Borrow Modal -->
-    <div id="quick-borrow-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-book-medical"></i> Quick Borrow</h3>
-                <button class="modal-close" onclick="closeModal('quick-borrow-modal')">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- Quick borrow form will be loaded here -->
-            </div>
+        <div class="form-group">
+          <label for="book-isbn">ISBN</label>
+          <input type="text" id="book-isbn" placeholder="Enter ISBN" required>
         </div>
-    </div>
-
-    <!-- Book Details Modal -->
-    <div id="book-details-modal" class="modal">
-        <div class="modal-content large">
-            <div class="modal-header">
-                <h3><i class="fas fa-book"></i> Book Details</h3>
-                <button class="modal-close" onclick="closeModal('book-details-modal')">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- Book details will be loaded here -->
-            </div>
+        <div class="form-group">
+          <label for="book-category">Category</label>
+          <input type="text" id="book-category" placeholder="Enter category" required>
         </div>
+        <button type="submit">Add Book</button>
+      </form>
+      <h2>All Books</h2>
+      <ul id="admin-book-list" class="book-list"></ul>
+      <h2>All Borrowed Books</h2>
+      <ul id="admin-borrowed-list" class="book-list"></ul>
     </div>
 
-    <!-- Confirmation Modal -->
-    <div id="confirmation-modal" class="modal">
-        <div class="modal-content small">
-            <div class="modal-header">
-                <h3><i class="fas fa-exclamation-circle"></i> Confirmation</h3>
-            </div>
-            <div class="modal-body">
-                <p id="confirmation-message">Are you sure you want to proceed?</p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('confirmation-modal')">
-                    Cancel
-                </button>
-                <button class="btn btn-primary" id="confirm-action-btn">
-                    Confirm
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+    <div id="message"></div>
+  </div>
+  <script src="script.js"></script>
 </body>
-</html>
+</html></content>
+<parameter name="filePath">c:\Users\kojob\Documents\Academic City Folders\LVL 300 SEM 1\Web Tech\JL\index.html
