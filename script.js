@@ -245,6 +245,72 @@ function getInitials(name) {
         .substring(0, 2);
 }
 
+/**
+ * API helper function
+ */
+async function apiRequest(endpoint, options = {}) {
+    const url = `${API_BASE}${endpoint}`;
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        },
+        ...options
+    };
+
+    if (token && !config.headers.Authorization) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    try {
+        const response = await fetch(url, config);
+        const data = await response.json();
+        return { response, data };
+    } catch (error) {
+        console.error(`API Error (${endpoint}):`, error);
+        throw error;
+    }
+}
+
+/**
+ * Set loading state on button
+ */
+function setLoading(button, loading) {
+    if (loading) {
+        button.dataset.originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+        button.disabled = true;
+    } else {
+        button.innerHTML = button.dataset.originalText || 'Submit';
+        button.disabled = false;
+    }
+}
+
+/**
+ * Bulk API request helper
+ */
+async function bulkApiRequest(endpoints, method = 'GET') {
+    const promises = endpoints.map(endpoint =>
+        apiRequest(endpoint, { method }).catch(error => ({ error, endpoint }))
+    );
+
+    const results = await Promise.allSettled(promises);
+    return results.map((result, index) => ({
+        ...result,
+        endpoint: endpoints[index]
+    }));
+}
+
+/**
+ * Clear container and show message
+ */
+function showMessage(container, message, type = 'info') {
+    container.innerHTML = `<div class="message ${type}">${message}</div>`;
+    if (type !== 'error') {
+        setTimeout(() => container.innerHTML = '', 5000);
+    }
+}
+
 // ============================================
 // AUTHENTICATION FUNCTIONS
 // ============================================
@@ -346,39 +412,35 @@ function showAuthTab(tab) {
  */
 async function handleLogin(e) {
     e.preventDefault();
-    
+
     const email = document.getElementById('login-email').value.trim();
     const password = document.getElementById('login-password').value;
     const rememberMe = document.getElementById('remember-me').checked;
-    
+
     // Validation
     if (!validateEmail(email)) {
         showToast('Please enter a valid email address', 'error');
         return;
     }
-    
+
     if (password.length < 6) {
         showToast('Password must be at least 6 characters', 'error');
         return;
     }
-    
+
     const submitBtn = e.target.querySelector('button[type="submit"]');
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
-    submitBtn.disabled = true;
-    
+    setLoading(submitBtn, true);
+
     try {
-        const response = await fetch(`${API_BASE}/api/auth/login`, {
+        const { response, data } = await apiRequest('/api/auth/login', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
         });
-        
-        const data = await response.json();
-        
+
         if (response.ok) {
             token = data.token;
             currentUser = data.user;
-            
+
             // Store in localStorage
             if (rememberMe) {
                 localStorage.setItem('token', token);
@@ -387,10 +449,10 @@ async function handleLogin(e) {
                 sessionStorage.setItem('token', token);
                 sessionStorage.setItem('user', JSON.stringify(currentUser));
             }
-            
+
             // Store last login
             localStorage.setItem('lastLogin', new Date().toISOString());
-            
+
             showToast('Login successful! Welcome back.', 'success');
             showMainApp();
         } else {
@@ -400,8 +462,7 @@ async function handleLogin(e) {
         console.error('Login error:', error);
         showToast('Connection failed. Please try again.', 'error');
     } finally {
-        submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
-        submitBtn.disabled = false;
+        setLoading(submitBtn, false);
     }
 }
 
@@ -410,50 +471,46 @@ async function handleLogin(e) {
  */
 async function handleRegister(e) {
     e.preventDefault();
-    
+
     const fullName = document.getElementById('register-fullname').value.trim();
     const email = document.getElementById('register-email').value.trim();
     const password = document.getElementById('register-password').value;
     const confirmPassword = document.getElementById('register-confirm-password').value;
-    
+
     // Validation
     if (fullName.length < 2) {
         showToast('Please enter your full name', 'error');
         return;
     }
-    
+
     if (!validateEmail(email)) {
         showToast('Please enter a valid email address', 'error');
         return;
     }
-    
+
     if (!validatePassword(password)) {
         showToast('Password must be at least 8 characters with letters and numbers', 'error');
         return;
     }
-    
+
     if (password !== confirmPassword) {
         showToast('Passwords do not match', 'error');
         return;
     }
-    
+
     const submitBtn = e.target.querySelector('button[type="submit"]');
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
-    submitBtn.disabled = true;
-    
+    setLoading(submitBtn, true);
+
     try {
-        const response = await fetch(`${API_BASE}/api/auth/register`, {
+        const { response, data } = await apiRequest('/api/auth/register', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                full_name: fullName, 
-                email, 
-                password 
+            body: JSON.stringify({
+                full_name: fullName,
+                email,
+                password
             })
         });
-        
-        const data = await response.json();
-        
+
         if (response.ok) {
             showToast('Registration successful! Please login.', 'success');
             showAuthTab('login');
@@ -465,8 +522,7 @@ async function handleRegister(e) {
         console.error('Registration error:', error);
         showToast('Connection failed. Please try again.', 'error');
     } finally {
-        submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
-        submitBtn.disabled = false;
+        setLoading(submitBtn, false);
     }
 }
 
@@ -483,15 +539,13 @@ async function verifyToken() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
 
-        const response = await fetch(`${API_BASE}/api/auth/verify`, {
-            headers: { 'Authorization': `Bearer ${token}` },
+        const { response, data } = await apiRequest('/api/auth/verify', {
             signal: controller.signal
         });
 
         clearTimeout(timeoutId);
 
         if (response.ok) {
-            const data = await response.json();
             currentUser = data.user;
             localStorage.setItem('user', JSON.stringify(currentUser));
             showMainApp();
@@ -770,12 +824,10 @@ async function loadDashboardStats() {
  */
 async function loadRecentBooks() {
     try {
-        const response = await fetch(`${API_BASE}/api/books/recent`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        
+        const { response, data } = await apiRequest('/api/books/recent');
+
         if (response.ok) {
-            books = await response.json();
+            books = data;
             displayRecentBooks(books.slice(0, 4));
         } else {
             // No books available
@@ -844,12 +896,10 @@ function displayRecentBooks(books) {
  */
 async function loadDueBooks() {
     try {
-        const response = await fetch(`${API_BASE}/api/borrow/my`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        
+        const { response, data } = await apiRequest('/api/borrow/my');
+
         if (response.ok) {
-            borrowedBooks = await response.json();
+            borrowedBooks = data;
             displayDueBooks(borrowedBooks.filter(book => !book.returned));
         } else {
             // Fallback to mock data
@@ -936,22 +986,20 @@ async function searchBooks() {
     const author = document.getElementById('search-author')?.value.trim();
     const category = document.getElementById('search-category')?.value;
     const availability = document.getElementById('search-availability')?.value;
-    
+
     showLoading();
-    
+
     try {
         const params = new URLSearchParams();
         if (title) params.append('title', title);
         if (author) params.append('author', author);
         if (category) params.append('category', category);
         if (availability) params.append('available', availability === 'available');
-        
-        const response = await fetch(`${API_BASE}/api/books/search?${params}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        
+
+        const { response, data } = await apiRequest(`/api/books/search?${params}`);
+
         if (response.ok) {
-            books = await response.json();
+            books = data;
             displayBooks(books);
             updateBooksCount(books.length);
         } else {
@@ -1101,14 +1149,12 @@ function setListView() {
  */
 async function loadBorrowedBooks() {
     showLoading();
-    
+
     try {
-        const response = await fetch(`${API_BASE}/api/borrow/my`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        
+        const { response, data } = await apiRequest('/api/borrow/my');
+
         if (response.ok) {
-            borrowedBooks = await response.json();
+            borrowedBooks = data;
             displayBorrowedBooks(borrowedBooks);
             updateBorrowedStats(borrowedBooks);
         } else {
@@ -1294,23 +1340,18 @@ function renewSelected() {
         showToast('Please select books to renew', 'warning');
         return;
     }
-    
+
     showConfirmation(
         `Renew ${selectedBooks.size} selected book(s)?`,
         async () => {
             showLoading();
-            
+
             try {
-                const promises = Array.from(selectedBooks).map(bookId => 
-                    fetch(`${API_BASE}/api/borrow/${bookId}/renew`, {
-                        method: 'PUT',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    })
-                );
-                
-                const results = await Promise.allSettled(promises);
-                const successful = results.filter(r => r.status === 'fulfilled' && r.value.ok).length;
-                
+                const endpoints = Array.from(selectedBooks).map(bookId => `/api/borrow/${bookId}/renew`);
+                const results = await bulkApiRequest(endpoints, 'PUT');
+
+                const successful = results.filter(r => r.status === 'fulfilled' && r.value.response?.ok).length;
+
                 if (successful > 0) {
                     showToast(`Successfully renewed ${successful} book(s)`, 'success');
                     loadBorrowedBooks();
@@ -1338,19 +1379,17 @@ async function renewBook(bookId) {
         'Renew this book for another 14 days?',
         async () => {
             showLoading();
-            
+
             try {
-                const response = await fetch(`${API_BASE}/api/borrow/${bookId}/renew`, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `Bearer ${token}` }
+                const { response, data } = await apiRequest(`/api/borrow/${bookId}/renew`, {
+                    method: 'PUT'
                 });
-                
+
                 if (response.ok) {
                     showToast('Book renewed successfully', 'success');
                     loadBorrowedBooks();
                     loadDashboard();
                 } else {
-                    const data = await response.json();
                     showToast(data.error || 'Failed to renew book', 'error');
                 }
             } catch (error) {
@@ -1371,22 +1410,16 @@ async function borrowBook(bookId) {
         'Borrow this book for 14 days?',
         async () => {
             showLoading();
-            
+
             try {
-                const response = await fetch(`${API_BASE}/api/borrow`, {
+                const { response, data } = await apiRequest('/api/borrow', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
                     body: JSON.stringify({ book_id: bookId })
                 });
-                
-                const data = await response.json();
-                
+
                 if (response.ok) {
                     showToast('Book borrowed successfully', 'success');
-                    
+
                     // Refresh data
                     if (currentSection === 'dashboard') {
                         loadDashboard();
@@ -1394,7 +1427,7 @@ async function borrowBook(bookId) {
                         searchBooks();
                     }
                     loadBorrowedBooks();
-                    
+
                 } else {
                     showToast(data.error || 'Failed to borrow book', 'error');
                 }
@@ -1416,23 +1449,21 @@ async function returnBook(borrowId) {
         'Return this book?',
         async () => {
             showLoading();
-            
+
             try {
-                const response = await fetch(`${API_BASE}/api/borrow/${borrowId}/return`, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `Bearer ${token}` }
+                const { response, data } = await apiRequest(`/api/borrow/${borrowId}/return`, {
+                    method: 'PUT'
                 });
-                
+
                 if (response.ok) {
                     showToast('Book returned successfully', 'success');
                     loadBorrowedBooks();
                     loadDashboard();
-                    
+
                     if (currentSection === 'books') {
                         searchBooks();
                     }
                 } else {
-                    const data = await response.json();
                     showToast(data.error || 'Failed to return book', 'error');
                 }
             } catch (error) {
@@ -1450,33 +1481,28 @@ async function returnBook(borrowId) {
  */
 function returnAllBooks() {
     const activeBooks = borrowedBooks.filter(book => !book.returned);
-    
+
     if (activeBooks.length === 0) {
         showToast('No books to return', 'info');
         return;
     }
-    
+
     showConfirmation(
         `Return all ${activeBooks.length} borrowed books?`,
         async () => {
             showLoading();
-            
+
             try {
-                const promises = activeBooks.map(book => 
-                    fetch(`${API_BASE}/api/borrow/${book.id}/return`, {
-                        method: 'PUT',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    })
-                );
-                
-                const results = await Promise.allSettled(promises);
-                const successful = results.filter(r => r.status === 'fulfilled' && r.value.ok).length;
-                
+                const endpoints = activeBooks.map(book => `/api/borrow/${book.id}/return`);
+                const results = await bulkApiRequest(endpoints, 'PUT');
+
+                const successful = results.filter(r => r.status === 'fulfilled' && r.value.response?.ok).length;
+
                 if (successful > 0) {
                     showToast(`Successfully returned ${successful} book(s)`, 'success');
                     loadBorrowedBooks();
                     loadDashboard();
-                    
+
                     if (currentSection === 'books') {
                         searchBooks();
                     }
@@ -1498,28 +1524,23 @@ function returnAllBooks() {
  */
 function renewAllBooks() {
     const activeBooks = borrowedBooks.filter(book => !book.returned);
-    
+
     if (activeBooks.length === 0) {
         showToast('No books to renew', 'info');
         return;
     }
-    
+
     showConfirmation(
         `Renew all ${activeBooks.length} borrowed books?`,
         async () => {
             showLoading();
-            
+
             try {
-                const promises = activeBooks.map(book => 
-                    fetch(`${API_BASE}/api/borrow/${book.id}/renew`, {
-                        method: 'PUT',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    })
-                );
-                
-                const results = await Promise.allSettled(promises);
-                const successful = results.filter(r => r.status === 'fulfilled' && r.value.ok).length;
-                
+                const endpoints = activeBooks.map(book => `/api/borrow/${book.id}/renew`);
+                const results = await bulkApiRequest(endpoints, 'PUT');
+
+                const successful = results.filter(r => r.status === 'fulfilled' && r.value.response?.ok).length;
+
                 if (successful > 0) {
                     showToast(`Successfully renewed ${successful} book(s)`, 'success');
                     loadBorrowedBooks();
